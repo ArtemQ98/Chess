@@ -21,7 +21,7 @@ string board[8][8]
 vector<char> numBoard = { '8', '7', '6', '5', '4', '3', '2', '1'};
 vector<char> strBoard = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 string stepStart, stepFinal, peshkaUpdate;
-int symStart, symFinal, numStart, numFinal, sum, sovp;
+int symStart, symFinal, numStart, numFinal, sum, sovp, eatW, eatB;
 char stepBlackOrWhite;
 bool okStep = true;
 
@@ -46,8 +46,11 @@ int main()
 		{
 			cout << " " << strBoard[i] << "  ";
 		}
-		cout << endl << endl;
-
+		cout << endl <<endl << "===================================";
+		cout << endl << "Совершено ходов: " << sum << endl;
+		cout << "Белые съели: " << eatW << endl;
+		cout << "Чёрные съели: " << eatB << endl;
+		cout << "===================================" << endl << endl;
 		// Ход
 
 		while (true)
@@ -124,12 +127,28 @@ int main()
 				if (board[8 - numStart][symStart] == "    " || board[8 - numStart][symStart] == "****")
 				{
 					cout << "Вы выбрали пустое поле!" << endl;
-					sum--;
+					continue;
+				}
+				else if (stepBlackOrWhite == 'W' && (board[8 - numStart][symStart][2] == 'ч'))
+				{
+					cout << "Вы взяли не свою фигуру" << endl;
+					numStart = 0;
+					symStart = 0;
+					continue;
+				}
+				else if (stepBlackOrWhite == 'B' && (board[8 - numStart][symStart][2] == 'б'))
+				{
+					cout << "Вы взяли не свою фигуру" << endl;
+					numStart = 0;
+					symStart = 0;
+					continue;
 				}
 				else
 				{
 					break;
 				}
+	
+				
 			}
 
 			while (true) //Ход куда
@@ -211,119 +230,247 @@ int main()
 				stepFinal = stepFinal[1];
 				numFinal = stoi(stepFinal);
 
-
-				if (board[8 - numStart][symStart] == "_пб_")
+				if (stepBlackOrWhite == 'W') // Ход белых
 				{
-					if (numStart == numFinal && symStart == symFinal)
+					if (board[8 - numStart][symStart] == "_пб_")
 					{
-						cout << "Нельзя ходить в первоначальную клетку!" << endl;
-						continue;
-					}
-
-
-					if (numStart == 2 && (!(numFinal == numStart + 1 || numFinal == numStart + 2) || !(symStart == symFinal) || !(board[8 - numFinal][symFinal] == "****" || board[8 - numFinal][symFinal] == "    ")))
-					{
-						cout << "Неверный ход пешкой1" << endl;
-						numFinal = 0;
-						symFinal = 0;
-						continue;
-					}
-
-					if ((numStart != 2 && board[8 - numFinal][symFinal] == "****") || (numStart != 2 && board[8 - numFinal][symFinal] == "    "))
-					{
-						if (symStart != symFinal || numStart != numFinal - 1)
+						if (numStart == numFinal && symStart == symFinal)
 						{
-							cout << "Неверный ход пешкой 2" << endl;
+							cout << "Нельзя ходить в первоначальную клетку!" << endl;
+							continue;
+						}
+
+
+						if (numStart == 2 && (!(numFinal == numStart + 1 || numFinal == numStart + 2) || !(symStart == symFinal) || !(board[8 - numFinal][symFinal] == "****" || board[8 - numFinal][symFinal] == "    ")))
+						{
+							cout << "Неверный ход пешкой1" << endl;
 							numFinal = 0;
 							symFinal = 0;
 							continue;
 						}
-					}
 
-					if ((numStart != 2 && board[8 - numFinal][symFinal] != "****") && (numStart != 2 && board[8 - numFinal][symFinal] != "    "))
-					{
-						if ((board[8 - numFinal][symFinal] == "_Кч_"))
+						if ((numStart != 2 && board[8 - numFinal][symFinal] == "****") || (numStart != 2 && board[8 - numFinal][symFinal] == "    "))
 						{
-							cout << "Вы не можете съесть Короля пешкой" << endl;
-							numFinal = 0;
-							symFinal = 0;
-							continue;
-						}
-						else if ((symStart != symFinal - 1 && numStart != numFinal - 1) || (symStart != symFinal + 1 && numStart != numFinal - 1) || (symStart == symFinal))
-						{
-							cout << "Неверный ход пешкой 3" << endl;
-							numFinal = 0;
-							symFinal = 0;
-							continue;
-						}
-					}
-
-					if (numFinal == 8)
-					{
-						while (true)
-						{
-							cout << "Какой фигурой вы хотите стать?";
-							cin >> peshkaUpdate;
-							if (peshkaUpdate == "Король")
+							if (symStart != symFinal || numStart != numFinal - 1)
 							{
-								cout << "Вы не можете стать королём";
+								cout << "Неверный ход пешкой 2" << endl;
+								numFinal = 0;
+								symFinal = 0;
 								continue;
 							}
+						}
 
-							else if (peshkaUpdate == "Ладья")
+						if ((numStart != 2 && board[8 - numFinal][symFinal] != "****") && (numStart != 2 && board[8 - numFinal][symFinal] != "    "))
+						{
+							if ((board[8 - numFinal][symFinal] == "_Кч_"))
 							{
-								board[8 - numStart][symStart] = "_лб_";
-								break;
+								cout << "Вы не можете съесть Короля пешкой" << endl;
+								numFinal = 0;
+								symFinal = 0;
+								continue;
 							}
-							else if (peshkaUpdate == "Ферзь")
+							else if ((symStart != symFinal - 1 && numStart != numFinal - 1) || (symStart != symFinal + 1 && numStart != numFinal - 1) || (symStart == symFinal))
 							{
-								board[8 - numStart][symStart] = "_Фб_";
-								break;
-							}
-							else if (peshkaUpdate == "Слон")
-							{
-								board[8 - numStart][symStart] = "_сб_";
-								break;
-							}
-							else if (peshkaUpdate == "Конь")
-							{
-								board[8 - numStart][symStart] = "_кб_";
-								break;
+								cout << "Неверный ход пешкой 3" << endl;
+								numFinal = 0;
+								symFinal = 0;
+								continue;
 							}
 							else
 							{
-								cout << "Я не знаю такой фигуры" << endl;
+								eatW++;
+							}
+						}
+
+						if (numFinal == 8)
+						{
+							while (true)
+							{
+								cout << "Какой фигурой вы хотите стать?";
+								cin >> peshkaUpdate;
+								if (peshkaUpdate == "Король")
+								{
+									cout << "Вы не можете стать королём";
+									continue;
+								}
+
+								else if (peshkaUpdate == "Ладья")
+								{
+									board[8 - numStart][symStart] = "_лб_";
+									break;
+								}
+								else if (peshkaUpdate == "Ферзь")
+								{
+									board[8 - numStart][symStart] = "_Фб_";
+									break;
+								}
+								else if (peshkaUpdate == "Слон")
+								{
+									board[8 - numStart][symStart] = "_сб_";
+									break;
+								}
+								else if (peshkaUpdate == "Конь")
+								{
+									board[8 - numStart][symStart] = "_кб_";
+									break;
+								}
+								else
+								{
+									cout << "Я не знаю такой фигуры" << endl;
+									continue;
+								}
+							}
+						}
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_лб_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_кб_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_сб_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_ФБ_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_КБ_")
+					{
+
+					}
+				}
+
+				else if (stepBlackOrWhite == 'B') // Ход чёрных
+				{
+					if (board[8 - numStart][symStart] == "_пч_")
+					{
+						if (numStart == numFinal && symStart == symFinal)
+						{
+							cout << "Нельзя ходить в первоначальную клетку!" << endl;
+							continue;
+						}
+
+
+						if (numStart == 7 && (!(numFinal == numStart - 1 || numFinal == numStart - 2) || !(symStart == symFinal) || !(board[8 - numFinal][symFinal] == "****" || board[8 - numFinal][symFinal] == "    ")))
+						{
+							cout << "Неверный ход пешкой1" << endl;
+							numFinal = 0;
+							symFinal = 0;
+							continue;
+						}
+
+						if ((numStart != 7 && board[8 - numFinal][symFinal] == "****") || (numStart != 7 && board[8 - numFinal][symFinal] == "    "))
+						{
+							if (symStart != symFinal || numStart != numFinal + 1)
+							{
+								cout << "Неверный ход пешкой 2" << endl;
+								numFinal = 0;
+								symFinal = 0;
 								continue;
 							}
 						}
+
+						if ((numStart != 7 && board[8 - numFinal][symFinal] != "****") && (numStart != 2 && board[8 - numFinal][symFinal] != "    "))
+						{
+							if ((board[8 - numFinal][symFinal] == "_Кб_"))
+							{
+								cout << "Вы не можете съесть Короля пешкой" << endl;
+								numFinal = 0;
+								symFinal = 0;
+								continue;
+							}
+							else if ((symStart != symFinal - 1 && numStart != numFinal + 1) || (symStart != symFinal + 1 && numStart != numFinal + 1) || (symStart == symFinal))
+							{
+								cout << "Неверный ход пешкой 3" << endl;
+								numFinal = 0;
+								symFinal = 0;
+								continue;
+							}
+							else
+							{
+								eatB++;
+							}
+						}
+
+						if (numFinal == 1)
+						{
+							while (true)
+							{
+								cout << "Какой фигурой вы хотите стать?";
+								cin >> peshkaUpdate;
+								if (peshkaUpdate == "Король")
+								{
+									cout << "Вы не можете стать Королём";
+									continue;
+								}
+
+								else if (peshkaUpdate == "Ладья")
+								{
+									board[8 - numStart][symStart] = "_лч_";
+									break;
+								}
+								else if (peshkaUpdate == "Ферзь")
+								{
+									board[8 - numStart][symStart] = "_Фч_";
+									break;
+								}
+								else if (peshkaUpdate == "Слон")
+								{
+									board[8 - numStart][symStart] = "_сч_";
+									break;
+								}
+								else if (peshkaUpdate == "Конь")
+								{
+									board[8 - numStart][symStart] = "_кч_";
+									break;
+								}
+								else
+								{
+									cout << "Я не знаю такой фигуры" << endl;
+									continue;
+								}
+							}
+						}
+
 					}
 
+					else if (board[8 - numStart][symStart] == "_лч_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_кч_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_сч_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_Фч_")
+					{
+
+					}
+
+					else if (board[8 - numStart][symStart] == "_Кч_")
+					{
+
+					}
 				}
+				
 
-				else if (board[8 - numStart][symStart] == "_лб_")
-				{
-
-				}
-
-				else if (board[8 - numStart][symStart] == "_кб_")
-				{
-
-				}
-
-				else if (board[8 - numStart][symStart] == "_сб_")
-				{
-
-				}
-
-				else if (board[8 - numStart][symStart] == "_ФБ_")
-				{
-
-				}
-
-				else if (board[8 - numStart][symStart] == "_КБ_")
-				{
-
-				}
 				board[8 - numFinal][symFinal] = board[8 - numStart][symStart];
 				if (numStart % 2 == 0)
 				{
@@ -351,7 +498,7 @@ int main()
 			}
 
 
-			cout << endl;
+			cout << endl << endl;
 			sum++;
 		}
 	}
