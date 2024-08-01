@@ -55,7 +55,6 @@ int main()
 
 		while (true)
 		{
-			cout << controlStep << endl;
 			if (sum % 2 == 0)
 			{
 				stepBlackOrWhite = 'W';
@@ -167,6 +166,7 @@ int main()
 
 				while (true)
 				{
+					
 					for (int i = 0; i < size(numBoard); i++)
 					{
 						if (stepFinal[1] == numBoard[i])
@@ -232,19 +232,21 @@ int main()
 				numFinal = stoi(stepFinal);
 				okStep = true;
 
-				if (stepBlackOrWhite == 'W') // Ход белых
+				if (numStart == numFinal && symStart == symFinal)
 				{
-					if (numStart == numFinal && symStart == symFinal)
-					{
-						cout << "Нельзя ходить в первоначальную клетку!" << endl;
-						continue;
-					}
+					cout << "Нельзя ходить в первоначальную клетку!" << endl;
+					continue;
+				}
 
-					/*if (board[8 - numFinal][symFinal][2] == 'б')
+				
+				/////// Ход белых
+				else if (stepBlackOrWhite == 'W') 
+				{
+					if (board[8 - numFinal][symFinal][2] == 'б')
 					{
 						cout << "Вы не можете есть свои фигуры" << endl;
 						continue;
-					}*/
+					}
 					/////Пешка
 					else if (board[8 - numStart][symStart] == "_пб_")
 					{
@@ -277,22 +279,30 @@ int main()
 							eatW++;
 						}
 
-						if (numStart == 2 && (!(numFinal == numStart + 1 || numFinal == numStart + 2) || !(symStart == symFinal) || !(board[8 - numFinal][symFinal] == "****" || board[8 - numFinal][symFinal] == "    ")))
+						if (numStart == 2)
 						{
-							cout << "Неверный ход пешкой1" << endl;
-							numFinal = 0;
-							symFinal = 0;
-							continue;
-						}
-
-						else if ((numStart != 2 && board[8 - numFinal][symFinal] == "****") || (numStart != 2 && board[8 - numFinal][symFinal] == "    "))
-						{
-							if (symStart != symFinal || numStart != numFinal - 1)
+							if (symStart != symFinal || !((numStart == numFinal - 1 || numStart == numFinal - 2)))
 							{
-								cout << "Неверный ход пешкой 2" << endl;
-								numFinal = 0;
-								symFinal = 0;
-								continue;
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
+							}
+							else if (!(board[8-numFinal][symFinal] == "    " || board[8 - numFinal][symFinal] == "****"))
+							{
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
+							}
+							else if (!(board[5][symFinal] == "    " || board[5][symFinal] == "****"))
+							{
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
+							}
+						}
+						else if (numStart != 2 && (board[8 - numFinal][symFinal] == "    " || board[8 - numFinal][symFinal] == "****"))
+						{
+							if (symStart != symFinal || !(numStart == numFinal - 1))
+							{
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
 							}
 						}
 
@@ -307,7 +317,7 @@ int main()
 							}
 							else if ((symStart != symFinal - 1 && numStart != numFinal - 1) || (symStart != symFinal + 1 && numStart != numFinal - 1) || (symStart == symFinal) || (numStart != numFinal-1))
 							{
-								cout << "Неверный ход пешкой 3" << endl;
+								cout << "Неверный ход пешкой" << endl;
 								numFinal = 0;
 								symFinal = 0;
 								continue;
@@ -317,7 +327,12 @@ int main()
 								eatW++;
 							}
 						}
-						
+						if (!okStep)
+						{
+							numFinal = 0;
+							symFinal = 0;
+							continue;
+						}
 						if (numFinal == 8)
 						{
 							while (true)
@@ -359,8 +374,9 @@ int main()
 						}
 
 					}
-					/////Ладья
-					else if (board[8 - numStart][symStart] == "_лб_") 
+
+					/////Ладья и Ферзь
+					else if (board[8 - numStart][symStart] == "_лб_" || board[8 - numStart][symStart] == "_Фб_")
 					{
 						//Ход по горизонтали
 						if (numStart == numFinal && symStart != symFinal) 
@@ -378,11 +394,7 @@ int main()
 									{
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
-									}
-									else
-									{
-										eatW++;
-									}
+									}	
 								}
 							}
 							else
@@ -398,10 +410,6 @@ int main()
 									{
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
-									}
-									else
-									{
-										eatW++;
 									}
 								}
 							}
@@ -423,10 +431,6 @@ int main()
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
 									}
-									else
-									{
-										eatW++;
-									}
 								}
 							}
 							else
@@ -443,17 +447,20 @@ int main()
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
 									}
-									else
-									{
-										eatW++;
-									}
 								}
 							}
 						}
 						//Неверный ход
 						else
 						{
-							cout << "Неверный ход ладьёй" << endl;
+							if (board[8 - numStart][symStart] == "_лб_")
+							{
+								cout << "Неверный ход ладьёй" << endl;
+							}
+							else
+							{
+								cout << "Неверный ход Ферзём" << endl;
+							}
 							numFinal = 0;
 							symFinal = 0;
 							continue;
@@ -463,6 +470,10 @@ int main()
 							numFinal = 0;
 							symFinal = 0;
 							continue;
+						}
+						else
+						{
+							eatW++;
 						}
 
 					}
@@ -474,7 +485,10 @@ int main()
 							(numFinal == numStart + 1 && symFinal == symStart - 2) || (numFinal == numStart + 1 && symFinal == symStart + 2) ||
 							(numFinal == numStart - 1 && symFinal == symStart - 2) || (numFinal == numStart + 1 && symFinal == symStart + 2))
 						{
-							eatW++;
+							if (board[8 - numFinal][symFinal][2] == 'ч')
+							{
+								eatW++;
+							}
 						}
 						else
 						{
@@ -484,25 +498,124 @@ int main()
 							continue;
 						}
 					}
-					/////Слон
-					else if (board[8 - numStart][symStart] == "_сб_") 
-					{
 
-					}
-					/////Ферзь
-					else if (board[8 - numStart][symStart] == "_ФБ_") 
+					/////Слон и Ферзь
+					else if (board[8 - numStart][symStart] == "_сб_" || board[8 - numStart][symStart] == "_Фб_")
 					{
-
+						// R1
+						if (numStart < numFinal && symStart < symFinal && symFinal - symStart == numFinal - numStart)
+						{
+							for (int i = 1; i <= symFinal - symStart; i++)
+							{
+								if (board[8 - numStart - i][symStart+i][2] == 'б')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart - i][symStart+i][2] == 'ч' && i != numFinal - numStart)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						// R2
+						else if (numStart < numFinal && symStart > symFinal && symStart - symFinal == numFinal - numStart)
+						{
+							for (int i = 1; i <= symStart-symFinal; i++)
+							{
+								if (board[8 - numStart - i][symStart - i][2] == 'б')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart - i][symStart - i][2] == 'ч' && i != numFinal - numStart)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						// R3
+						else if (numStart > numFinal && symStart > symFinal && symStart - symFinal ==  numStart - numFinal)
+						{
+							for (int i = 1; i <= symStart - symFinal; i++)
+							{
+								if (board[8 - numStart + i][symStart - i][2] == 'б')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart + i][symStart - i][2] == 'ч' && i != numStart - numFinal)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						// R4
+						else if (numStart > numFinal && symStart < symFinal && symFinal - symStart == numStart - numFinal)
+						{
+							for (int i = 1; i <= symStart - symFinal; i++)
+							{
+								if (board[8 - numStart + i][symStart + i][2] == 'б')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart + i][symStart + i][2] == 'ч' && i != numStart - numFinal)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						//Неверный ход
+						else
+						{
+							if (board[8 - numStart][symStart] == "_сб_")
+							{
+								cout << "Неверный ход слоном" << endl;
+							}
+							else
+							{
+								cout << "Неверный ход Ферзём" << endl;
+							}
+							numFinal = 0;
+							symFinal = 0;
+							continue;
+						}
+						if (!okStep)
+						{
+							numFinal = 0;
+							symFinal = 0;
+							continue;
+						}
+						else if (board[8 - numFinal][symFinal][2] == 'ч')
+						{
+							eatW++;
+						}
 					}
+
 					/////Король
 					else if (board[8 - numStart][symStart] == "_КБ_") 
 					{
 
 					}
 				}
-
-				else if (stepBlackOrWhite == 'B') /////// Ход чёрных
+				/////// Ход чёрных
+				else if (stepBlackOrWhite == 'B')
 				{
+					if (board[8 - numFinal][symFinal][2] == 'ч')
+					{
+						cout << "Вы не можете есть свои фигуры" << endl;
+						continue;
+					}
+					/////Пешка
 					if (board[8 - numStart][symStart] == "_пч_")
 					{
 						if (numStart == numFinal && symStart == symFinal)
@@ -538,22 +651,30 @@ int main()
 							eatB++;
 						}
 
-						else if (numStart == 7 && (!(numFinal == numStart - 1 || numFinal == numStart - 2) || !(symStart == symFinal) || !(board[8 - numFinal][symFinal] == "****" || board[8 - numFinal][symFinal] == "    ")))
+						if (numStart == 7)
 						{
-							cout << "Неверный ход пешкой1" << endl;
-							numFinal = 0;
-							symFinal = 0;
-							continue;
-						}
-
-						else if ((numStart != 7 && board[8 - numFinal][symFinal] == "****") || (numStart != 7 && board[8 - numFinal][symFinal] == "    "))
-						{
-							if (symStart != symFinal || numStart != numFinal + 1)
+							if (symStart != symFinal || !((numStart == numFinal + 1 || numStart == numFinal + 2)))
 							{
-								cout << "Неверный ход пешкой 2" << endl;
-								numFinal = 0;
-								symFinal = 0;
-								continue;
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
+							}
+							else if (!(board[8 - numFinal][symFinal] == "    " || board[8 - numFinal][symFinal] == "****"))
+							{
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
+							}
+							else if (!(board[2][symFinal] == "    " || board[2][symFinal] == "****"))
+							{
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
+							}
+						}
+						else if (numStart != 7 && (board[8 - numFinal][symFinal] == "    " || board[8 - numFinal][symFinal] == "****"))
+						{
+							if (symStart != symFinal || !(numStart == numFinal + 1))
+							{
+								cout << "Неверный ход пешкой" << endl;
+								okStep = false;
 							}
 						}
 
@@ -620,7 +741,7 @@ int main()
 						}
 						
 					}
-
+					/////Ладья
 					else if (board[8 - numStart][symStart] == "_лч_")
 					{
 						//Ход по горизонтали
@@ -640,7 +761,7 @@ int main()
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
 									}
-									else
+									else if(board[8 - numFinal][symFinal][2] == 'б')
 									{
 										eatB++;
 									}
@@ -660,7 +781,7 @@ int main()
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
 									}
-									else
+									else if(board[8 - numFinal][symFinal][2] == 'б')
 									{
 										eatB++;
 									}
@@ -684,7 +805,7 @@ int main()
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
 									}
-									else
+									else if(board[8 - numFinal][symFinal][2] == 'б')
 									{
 										eatB++;
 									}
@@ -704,7 +825,7 @@ int main()
 										cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 										okStep = false;
 									}
-									else
+									else if (board[8 - numFinal][symFinal][2] == 'б')
 									{
 										eatB++;
 									}
@@ -714,7 +835,14 @@ int main()
 						//Неверный ход
 						else
 						{
-							cout << "Неверный ход ладьёй" << endl;
+							if (board[8 - numStart][symStart] == "_лч_")
+							{
+								cout << "Неверный ход ладьёй" << endl;
+							}
+							else
+							{
+								cout << "Неверный ход Ферзём" << endl;
+							}
 							numFinal = 0;
 							symFinal = 0;
 							continue;
@@ -726,7 +854,7 @@ int main()
 							continue;
 						}
 					}
-
+					/////Конь
 					else if (board[8 - numStart][symStart] == "_кч_")
 					{
 						if ((numFinal == numStart + 2 && symFinal == symStart - 1) || (numFinal == numStart + 2 && symFinal == symStart + 1) ||
@@ -734,7 +862,10 @@ int main()
 							(numFinal == numStart + 1 && symFinal == symStart - 2) || (numFinal == numStart + 1 && symFinal == symStart + 2) ||
 							(numFinal == numStart - 1 && symFinal == symStart - 2) || (numFinal == numStart + 1 && symFinal == symStart + 2))
 						{
-							eatB++;
+							if (board[8 - numFinal][symFinal][2] == 'б')
+							{
+								eatB++;
+							}	
 						}
 						else
 						{
@@ -744,17 +875,109 @@ int main()
 							continue;
 						}
 					}
-
-					else if (board[8 - numStart][symStart] == "_сч_")
+					/////Слон
+					else if (board[8 - numStart][symStart] == "_сч_" || board[8 - numStart][symStart] == "_Фч_")
 					{
-
+						// R1
+						if (numStart < numFinal && symStart < symFinal && symFinal - symStart == numFinal - numStart)
+						{
+							for (int i = 1; i <= symFinal - symStart; i++)
+							{
+								if (board[8 - numStart - i][symStart + i][2] == 'ч')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart - i][symStart + i][2] == 'б' && i != numFinal - numStart)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						// R2
+						else if (numStart < numFinal && symStart > symFinal && symStart - symFinal == numFinal - numStart)
+						{
+							for (int i = 1; i <= symStart - symFinal; i++)
+							{
+								if (board[8 - numStart - i][symStart - i][2] == 'ч')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart - i][symStart - i][2] == 'б' && i != numFinal - numStart)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						// R3
+						else if (numStart > numFinal && symStart > symFinal && symStart - symFinal == numStart - numFinal)
+						{
+							for (int i = 1; i <= symStart - symFinal; i++)
+							{
+								if (board[8 - numStart + i][symStart - i][2] == 'ч')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart + i][symStart - i][2] == 'б' && i != numStart - numFinal)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше 3" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						// R4
+						else if (numStart > numFinal && symStart < symFinal && symFinal - symStart == numStart - numFinal)
+						{
+							for (int i = 1; i <= symStart - symFinal; i++)
+							{
+								if (board[8 - numStart + i][symStart + i][2] == 'ч')
+								{
+									cout << "Вы не можете перейти через свою фигуру" << endl;
+									okStep = false;
+								}
+								else if (board[8 - numStart + i][symStart + i][2] == 'б' && i != numStart - numFinal)
+								{
+									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
+									okStep = false;
+								}
+								
+							}
+						}
+						//Неверный ход
+						else
+						{
+							if (board[8 - numStart][symStart] == "_сч_")
+							{
+								cout << "Неверный ход слоном" << endl;
+							}
+							else
+							{
+								cout << "Неверный ход Ферзём" << endl;
+							}
+							numFinal = 0;
+							symFinal = 0;
+							continue;
+						}
+						if (!okStep)
+						{
+							numFinal = 0;
+							symFinal = 0;
+							continue;
+						}
+						else if (board[8 - numFinal][symFinal][2])
+						{
+							eatB++;
+						}
 					}
 
-					else if (board[8 - numStart][symStart] == "_Фч_")
-					{
-
-					}
-
+					/////Король
 					else if (board[8 - numStart][symStart] == "_Кч_")
 					{
 
