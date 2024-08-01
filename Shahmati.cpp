@@ -21,7 +21,7 @@ string board[8][8]
 vector<char> numBoard = { '8', '7', '6', '5', '4', '3', '2', '1'};
 vector<char> strBoard = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 string stepStart, stepFinal, peshkaUpdate;
-int symStart, symFinal, numStart, numFinal, sum, sovp, eatW, eatB, controlStep; //controlStep для взятия на проходе у пешки
+int symStart, symFinal, numStart, numFinal, sum, sovp, eatW, eatB, controlStep, quantityCheck{1}; //controlStep для взятия на проходе у пешки
 char stepBlackOrWhite;
 bool okStep = true;
 
@@ -55,6 +55,10 @@ int main()
 
 		while (true)
 		{
+			if (quantityCheck > 0)
+			{
+				cout << "Шах";
+			}
 			if (sum % 2 == 0)
 			{
 				stepBlackOrWhite = 'W';
@@ -490,6 +494,14 @@ int main()
 								eatW++;
 							}
 						}
+						if ((board[8-numFinal+2][symFinal-1] == "_Кб_") || (board[8 - numFinal + 2][symFinal + 1] == "_Кб_") ||
+							(board[8 - numFinal - 2][symFinal - 1] == "_Кб_") || (board[8 - numFinal - 2][symFinal + 1] == "_Кб_") ||
+							(board[8 - numFinal + 1][symFinal - 2] == "_Кб_") || (board[8 - numFinal + 1][symFinal + 2] == "_Кб_") ||
+							(board[8 - numFinal - 1][symFinal - 2] == "_Кб_") || (board[8 - numFinal + 1][symFinal + 2] == "_Кб_"))
+						{
+							quantityCheck++;
+						}
+						
 						else
 						{
 							cout << "Неверный ход конём" << endl;
