@@ -56,7 +56,7 @@ int main()
 		// Ход
 		while (true)
 		{
-			
+			check_W = false;
 			check_B = false;
 			for (int i = 0; i < 8; i++)
 			{
