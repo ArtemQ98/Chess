@@ -33,9 +33,10 @@ int main()
 	setlocale(LC_ALL, "Ru");
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
+	cout << "****ШАХМАТЫ****" << endl << "ВКЛЮЧИТЕ CapsLock!!!" << endl << "Для ввода хода используйте английскую раскладку" << endl << "Для изменения пешки введите фигуру так, например, ФЕРЗЬ" << endl << "Для предложения ничьи введите 'НИЧЬЯ'" << endl << endl;
+
 	while (true)
 	{
-		cout << "****ШАХМАТЫ****" << endl << "ВКЛЮЧИТЕ CapsLock!!!" << endl << "Для ввода хода используйте английскую раскладку" << endl << "Для изменения пешки введите фигуру так, например, ФЕРЗЬ" << endl << "Для предложения ничьи введите 'НИЧЬЯ'" << endl << endl;
 		
 
 
@@ -413,6 +414,7 @@ int main()
 
 				while (true)
 				{
+					okStep = true;
 					for (int i = 0; i < size(numBoard); i++)
 					{
 						if (stepStart[1] == numBoard[i])
@@ -430,11 +432,18 @@ int main()
 					{
 						cout << "Неверное значение" << endl;
 						okStep = false;
+						break;
 					}
+				}
+				if (!okStep)
+				{
+					okStep = true;
+					continue;
 				}
 				//Ход откуда
 				while (true)
 				{
+					okStep = true;
 					for (int i = 0; i < size(strBoard); i++)
 					{
 						if (stepStart[0] == strBoard[i])
@@ -494,6 +503,7 @@ int main()
 			//Ход куда
 			while (true)
 			{
+				okStep = true;
 				if (stepBlackOrWhite == 'W')
 				{
 					cout << "Ход белых в: ";
@@ -528,7 +538,11 @@ int main()
 						break;
 					}
 				}
-
+				if (!okStep)
+				{
+					okStep = true;
+					continue;
+				}
 				while (true)
 				{
 					for (int i = 0; i < size(strBoard); i++)
@@ -666,6 +680,10 @@ int main()
 						}
 						if (numFinal == 8)
 						{
+							if (board[0][symFinal][2] == 'б' && board[1][symFinal] != "_Кб_")
+							{
+								eatB.push_back(board[8 - numFinal][symFinal]);
+							}
 							while (true)
 							{
 								cout << "Какой фигурой вы хотите стать?";
@@ -911,7 +929,7 @@ int main()
 						// R4
 						else if (numStart > numFinal && symStart < symFinal && symFinal - symStart == numStart - numFinal)
 						{
-							for (int i = 1; i <= symStart - symFinal; i++)
+							for (int i = 1; i <= symFinal - symStart; i++)
 							{
 								if (board[8 - numStart + i][symStart + i][2] == 'б')
 								{
@@ -1091,7 +1109,7 @@ int main()
 						// R4
 						else if (numStart > numFinal && symStart < symFinal && symFinal - symStart == numStart - numFinal)
 						{
-							for (int i = 1; i <= symStart - symFinal; i++)
+							for (int i = 1; i <= symFinal - symStart; i++)
 							{
 								if (board[8 - numStart + i][symStart + i][2] == 'б')
 								{
@@ -1282,8 +1300,13 @@ int main()
 
 						else if (numFinal == 1)
 						{
+							if (board[7][symFinal][2] == 'б' && board[1][symFinal] != "_Кб_")
+							{
+								eatB.push_back(board[8 - numFinal][symFinal]);
+							}
 							while (true)
 							{
+								
 								cout << "Какой фигурой вы хотите стать?";
 								cin >> peshkaUpdate;
 								if (peshkaUpdate == "КОРОЛЬ")
@@ -1443,7 +1466,7 @@ int main()
 						}
 					}
 					/////Слон
-					else if (board[8 - numStart][symStart] == "_сч_" || board[8 - numStart][symStart] == "_Фч_")
+					else if (board[8 - numStart][symStart] == "_сч_")
 					{
 						// R1
 						if (numStart < numFinal && symStart < symFinal && symFinal - symStart == numFinal - numStart)
@@ -1502,7 +1525,7 @@ int main()
 						// R4
 						else if (numStart > numFinal && symStart < symFinal && symFinal - symStart == numStart - numFinal)
 						{
-							for (int i = 1; i <= symStart - symFinal; i++)
+							for (int i = 1; i <= symFinal - symStart; i++)
 							{
 								if (board[8 - numStart + i][symStart + i][2] == 'ч')
 								{
@@ -1514,8 +1537,9 @@ int main()
 									cout << "Вы должны съесть вражескую фигуру, чтобы пройти дальше" << endl;
 									okStep = false;
 								}
-								
 							}
+
+							
 						}
 						//Неверный ход
 						else
@@ -1673,7 +1697,7 @@ int main()
 						// R4
 						else if (numStart > numFinal && symStart < symFinal && symFinal - symStart == numStart - numFinal)
 						{
-							for (int i = 1; i <= symStart - symFinal; i++)
+							for (int i = 1; i <= symFinal - symStart; i++)
 							{
 								if (board[8 - numStart + i][symStart + i][2] == 'ч')
 								{
