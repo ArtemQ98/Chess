@@ -11,8 +11,8 @@ string board[8][8]
 	{"_пч_", "_пч_", "_пч_", "_пч_", "_пч_", "_пч_", "_пч_", "_пч_"},
 	{"****", "    ", "****", "    ", "****", "    ", "****", "    "},
 	{"    ", "****", "    ", "****", "    ", "****", "    ", "****"},
-	{"****", "    ", "****", "    ", "****", "    ", "****", "    "},
-	{"    ", "****", "    ", "****", "    ", "****", "    ", "****"},
+	{"****", "    ", "****", "    ", "****", "_лч_", "****", "    "},
+	{"    ", "****", "    ", "_сч_", "    ", "****", "    ", "****"},
 	{"_пб_", "_пб_", "_пб_", "_пб_", "_пб_", "_пб_", "_пб_", "_пб_"},
 	{"_лб_", "_кб_", "_сб_", "_Фб_", "_Кб_", "_сб_", "_кб_", "_лб_"}
 };
@@ -26,7 +26,7 @@ string stepStart, stepFinal, peshkaUpdate, drawAnswer;
 int symStart, symFinal, numStart, numFinal, sum, sovp, controlStep; //controlStep для взятия на проходе у пешки
 int stepCheck_B, stepCheck_W, quantityCheck_B, quantityCheck_W; //Для шах и мата
 char stepBlackOrWhite;
-bool okStep{ true }, check_B{ false }, check_W{ false }, draw{ false };
+bool okStep{ true }, check_B{ false }, check_W{ false }, draw{ false }, shortRokB{ true }, shortRokW{ true }, longRokB{ true }, longRokW{ true }, stepShortRok_W{ true }, stepShortRok_B{ true }, stepLongRok_W{ true }, stepLongRok_B{ true }, queenStep_B{ true }, queenStep_W{ true };
 
 int main()
 {
@@ -37,8 +37,6 @@ int main()
 
 	while (true)
 	{
-		
-
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -73,12 +71,25 @@ int main()
 		// Ход
 		while (true)
 		{
+			shortRokW = true;
+			shortRokB = true;
 			check_W = false;
 			check_B = false;
 			for (int i = 0; i < 8; i++)
 			{
 				for (int j = 0; j < 8; j++)
 				{	
+					if (board[i][j] == "_пб_") //Рокировка
+					{
+						if (i == 1 && (j-1 == 6 || j-1 == 5 || j + 1 == 6 || j + 1 == 5))
+						{
+							shortRokB = false;
+						}
+						if (i == 1 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4))
+						{
+							longRokB = false;
+						}
+					}
 					if (board[i][j] == "_лб_" || board[i][j] == "_Фб_")
 					{
 						for (int x = 1; x <= 7 - j; x++)
@@ -132,6 +143,38 @@ int main()
 								break;
 							}
 						}
+
+						if (j == 6 || j == 5)
+						{
+
+							for (int x = 1; x < 8 - (8 - i); x++) //Рокировка
+							{
+								if (board[i - x][j] != "    " && board[i - x][j] != "****" && i != 0)
+								{
+									break;
+								}
+								else if (i - x == 0)
+								{
+									shortRokB = false;
+								}
+							}
+						}
+
+						if (j == 1 || j == 2 || j == 3) 
+						{
+
+							for (int x = 1; x < 8 - (8 - i); x++) //Рокировка 
+							{
+								if (board[i - x][j] != "    " && board[i - x][j] != "****" && i != 0) 
+								{
+									break;
+								}
+								else if (i - x == 7) 
+								{
+									longRokB = false; 
+								}
+							}
+						}
 					}
 					if (board[i][j] == "_кб_")
 					{
@@ -141,6 +184,14 @@ int main()
 							(board[i - 1][j - 2] == "_Кч_") || (board[i - 1][j + 2] == "_Кч_"))
 						{
 							check_B = true;
+						}
+						if ((i == 2 && j == 4) || (i == 2 && j == 5) || (i == 2 && j == 6) || (i == 2 && j == 7) || (i == 1 && j == 3) || (i == 1 && j == 7) || (i == 2 && j == 4))
+						{
+							shortRokB = false;
+						}
+						if ((i == 2 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4)) || (i == 1 && (j == 0 || j == 1 || j == 3 || j == 4 || j == 5)))
+						{
+							longRokB = false;
 						}
 					}
 					if (board[i][j] == "_сб_" || board[i][j] == "_Фб_")
@@ -196,8 +247,78 @@ int main()
 								break;
 							}
 						}
+
+						for (int x = 1; x <= 8 - (8 - i); x++) //Рокировка 
+						{
+							if (board[i - x][j - x] != "    " && board[i - x][j - x] != "****" && i != 0)
+							{
+								break;
+							}
+							if (i - x == 0 && (j - x == 6 || j - x == 5))
+							{
+								shortRokB = false;
+							}
+						}
+
+						for (int x = 1; x <= 8 - (8 - i); x++) //Рокировка 
+						{
+							if (board[i - x][j + x] != "    " && board[i - x][j + x] != "****" && i != 0)
+							{
+								break;
+							}
+							if (i - x == 0 && (j + x == 6 || j + x == 5))
+							{
+								shortRokB = false;
+							}
+						}
+
+						for (int x = 1; x <= 8 - (8 - i); x++) //Рокировка
+						{
+							if (board[i - x][j - x] != "    " && board[i - x][j - x] != "****" && i != 0)
+							{
+								break;
+							}
+							if (i - x == 0 && (j - x == 1 || j - x == 2 || j - x == 3))
+							{
+								longRokB = false;
+							}
+						}
+
+						for (int x = 1; x <= 8 - (8 - i); x++) //Рокировка
+						{
+							if (board[i - x][j + x] != "    " && board[i - x][j + x] != "****" && i != 0)
+							{
+								break;
+							}
+							if (i - x == 0 && (j + x == 1 || j + x == 2 || j + x == 3))
+							{
+								longRokB = false;
+							}
+						}
+					}
+					if (board[i][j] == "_Кб_")
+					{
+						if (i == 1 && (j == 7 || j == 6 || j == 5 || j == 4))
+						{
+							shortRokB = false;
+						}
+						if (i == 1 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4))
+						{
+							longRokB = false;
+						}
 					}
 					
+					if (board[i][j] == "_пч_") //Рокировка
+					{
+						if (i == 6 && (j - 1 == 6 || j - 1 == 5 || j + 1 == 6 || j + 1 == 5))
+						{
+							shortRokW = false;
+						}
+						if (i == 6 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4))
+						{
+							longRokW = false; 
+						}
+					}
 					if (board[i][j] == "_лч_" || board[i][j] == "_Фч_")
 					{
 						for (int x = 1; x <= 7 - j; x++)
@@ -238,9 +359,10 @@ int main()
 								break;
 							}
 						}
-
+						
 						for (int x = 1; i < 8 - (8 - i); x++)
 						{
+							
 							if (board[i + x][j] != "    " && board[i + x][j] != "****" && board[i + x][j] != "_Кб_")
 							{
 								break;
@@ -249,6 +371,38 @@ int main()
 							{
 								check_W = true;
 								break;
+							}
+						}
+
+						if (j == 6 || j == 5)
+						{
+							
+							for (int x = 1; x < 8 - (8 - i); x++) //Рокировка
+							{
+								if (board[i + x][j] != "    " && board[i + x][j] != "****" && i != 7)
+								{
+									break;
+								}
+								else if (i + x == 7)
+								{
+									shortRokW = false;
+								}
+							}
+						}
+						
+						if (j == 1 || j == 2 || j == 3)
+						{
+
+							for (int x = 1; x < 8 - (8 - i); x++) //Рокировка
+							{
+								if (board[i + x][j] != "    " && board[i + x][j] != "****" && i != 7)
+								{
+									break;
+								}
+								else if (i + x == 7)
+								{
+									longRokW = false;
+								}
 							}
 						}
 					}
@@ -260,6 +414,14 @@ int main()
 							(board[i - 1][j - 2] == "_Кб_") || (board[i - 1][j + 2] == "_Кб_"))
 						{
 							check_W = true;
+						}
+						if ((i == 5 && j == 4) || (i == 5 && j == 5) || (i == 5 && j == 6) || (i == 5 && j == 7) || (i == 6 && j == 3) || (i == 6 && j == 7) || (i == 5 && j == 4))
+						{
+							shortRokW = false;
+						}
+						if ((i == 5 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4)) || (i == 6 && (j == 0 || j == 1 || j == 3 || j == 4 || j == 5)))
+						{
+							longRokW = false;
 						}
 					}
 					if (board[i][j] == "_сч_" || board[i][j] == "_Фч_")
@@ -314,6 +476,66 @@ int main()
 								check_W = true;
 								break;
 							}
+						}
+
+						for (int x = 1; x < 8 - (8 - i); x++) //Рокировка 
+						{
+							if (board[i + x][j + x] != "    " && board[i + x][j + x] != "****" && i != 7) 
+							{
+								break;
+							}
+							if (i + x == 7 && (j + x == 6 || j + x == 5))
+							{
+								shortRokW = false; 
+							}
+						}
+
+						for (int x = 1; x < 8 - (8 - i); x++) //Рокировка 
+						{
+							if (board[i + x][j - x] != "    " && board[i + x][j - x] != "****" && i != 7)
+							{
+								break;
+							}
+							if (i + x == 7 && (j - x == 6 || j - x == 5))
+							{
+								shortRokW = false;
+							}
+						}
+
+						for (int x = 1; x < 8 - (8 - i); x++) //Рокировка 
+						{
+							if (board[i + x][j + x] != "    " && board[i + x][j + x] != "****" && i != 7)
+							{
+								break;
+							}
+							if (i + x == 7 && (j + x == 1 || j + x == 2 || j + x == 3))
+							{
+								longRokW = false;
+							}
+						}
+
+						for (int x = 1; x < 8 - (8 - i); x++) //Рокировка
+						{
+							if (board[i + x][j - x] != "    " && board[i + x][j - x] != "****" && i != 7)
+							{
+								break;
+							}
+							if (i + x == 7 && (j - x == 1 || j - x == 2 || j - x == 3))
+							{
+								longRokW = false;
+							}
+						}
+					}
+				
+					if (board[i][j] == "_Кч_") 
+					{
+						if (i == 6 && (j == 7 || j == 6 || j == 5 || j == 4))
+						{
+							shortRokW = false;
+						}
+						if (i == 6 && (j == 0 || j == 1 || j == 2 || j == 3 || j == 4))
+						{
+							longRokW = false;
 						}
 					}
 				}
@@ -378,6 +600,8 @@ int main()
 				cout << "Шах белым!" << endl;
 
 			}
+
+			
 			if (sum % 2 == 0)
 			{
 				stepBlackOrWhite = 'W';
@@ -388,7 +612,7 @@ int main()
 				stepBlackOrWhite = 'B';
 				cout << "Ход чёрных из:";
 			}
-			cin >> stepStart;
+			getline(cin, stepStart);
 			//Ничья
 			if (stepStart == "НИЧЬЯ")
 			{
@@ -410,11 +634,15 @@ int main()
 					continue;
 				}
 			}
-
-
+			if (stepStart.length() != 2)
+			{
+				cout << "Неверное значение, введите координату 2 символами, например, A3, но не A2 A3" << endl;
+				continue;
+			}
 				while (true)
 				{
 					okStep = true;
+					
 					for (int i = 0; i < size(numBoard); i++)
 					{
 						if (stepStart[1] == numBoard[i])
@@ -507,14 +735,21 @@ int main()
 				if (stepBlackOrWhite == 'W')
 				{
 					cout << "Ход белых в: ";
-					cin >> stepFinal;
 				}
 				else
 				{
-					cout << "Ход чёрных в:";
-					cin >> stepFinal;
+					cout << "Ход чёрных в: ";
 				}
-
+				if (true)
+				{
+					getline(cin, stepFinal);
+				}
+				
+				if (stepFinal.length() != 2)
+				{
+					cout << "Неверное значение, введите координату 2 символами, например, A3, но не A2 A3" << endl;
+					continue;
+				}
 				while (true)
 				{
 					
@@ -596,7 +831,7 @@ int main()
 					{
 						
 
-						if (numFinal == 6 && board[3][symFinal] == "_пч_" && controlStep == symFinal)
+						if (numFinal == 6 && board[3][symFinal] == "_пч_" && controlStep == symFinal && numStart == numFinal - 1)
 						{
 							eatW.push_back(board[3][symFinal]);
 							if (numStart % 2 == 0)
@@ -682,12 +917,12 @@ int main()
 						{
 							if (board[0][symFinal][2] == 'б' && board[1][symFinal] != "_Кб_")
 							{
-								eatB.push_back(board[8 - numFinal][symFinal]);
+								eatW.push_back(board[8 - numFinal][symFinal]);
 							}
 							while (true)
 							{
 								cout << "Какой фигурой вы хотите стать?";
-								cin >> peshkaUpdate;
+								getline(cin, peshkaUpdate);
 								if (peshkaUpdate == "КОРОЛЬ")
 								{
 									cout << "Вы не можете стать королём";
@@ -972,7 +1207,7 @@ int main()
 					}
 					
 					/////Ферзь
-					else if (board[8 - numStart][symStart] == "_КБ_")
+					else if (board[8 - numStart][symStart] == "_Фб_")
 					{
 						//Ход по горизонтали
 						if (numStart == numFinal && symStart != symFinal)
@@ -1146,7 +1381,69 @@ int main()
 					/////Король
 					else if (board[8 - numStart][symStart] == "_Кб_") 
 					{
-						if ((numFinal - 1 == numStart || numFinal + 1 == numStart) && symFinal == symStart)
+						if (numFinal == 1 && (symFinal == 6 || symFinal == 2))
+						{
+							if (!queenStep_W)
+							{
+								cout << "Рокировка невозможна" << endl;
+								okStep = false;
+							}
+							for (int i = 0; i < 2; i++) 
+							{
+								
+								if (symFinal == 6) 
+								{
+									if (!shortRokW || !stepShortRok_W)
+									{
+										cout << "Рокировка невозможна" << endl;
+										okStep = false;
+										break;
+									}
+									else if (!(board[7][6 - i] == "    " || board[7][6 - i] == "****")) 
+									{
+										cout << "Рокировка невозможна" << endl;
+										okStep = false;
+										break;
+									}
+								}
+								else if (symFinal == 2)
+								{
+									if (!longRokW || !stepLongRok_W)
+									{
+										cout << "Рокировка невозможна" << endl; 
+										okStep = false; 
+										break;
+									}
+									if (!(board[7][2 + i] == "    " || board[7][2 + i] == "****")) 
+									{
+										cout << "Рокировка невозможна" << endl; 
+										okStep = false; 
+										break;
+									}
+								}
+							}
+							if (!okStep) 
+							{
+								numFinal = 0; 
+								symFinal = 0; 
+								continue; 
+							}
+							else if (okStep) 
+							{
+								if (symFinal == 6)
+								{
+									board[7][5] = "_лб_";
+									board[7][7] = "****";
+								}
+								if (symFinal == 2)
+								{
+									board[7][3] = "_лб_";
+									board[7][0] = "    ";
+								}
+							}
+							
+						}
+						else if ((numFinal - 1 == numStart || numFinal + 1 == numStart) && symFinal == symStart)
 						{
 							if (board[8 - numFinal][symFinal] == "_Фч_" || board[8 - numFinal][symFinal] == "_Кч_")
 							{
@@ -1191,7 +1488,7 @@ int main()
 						}
 						else
 						{
-							cout << "Неверный ход конём" << endl;
+							cout << "Неверный ход Королём" << endl;
 							numFinal = 0;
 							symFinal = 0;
 							continue;
@@ -1215,9 +1512,9 @@ int main()
 							continue;
 						}
 
-						if (numFinal == 3 && board[4][symFinal] == "_пб_" && controlStep == symFinal) // Взятие на проходе
+						if (numFinal == 3 && board[4][symFinal] == "_пб_" && controlStep == symFinal && numStart == numFinal + 1) // Взятие на проходе
 						{
-							eatW.push_back(board[4][symFinal]);
+							eatB.push_back(board[4][symFinal]);
 							if (numStart % 2 == 0)
 							{
 								if ((symFinal) % 2 == 0)
@@ -1308,7 +1605,7 @@ int main()
 							{
 								
 								cout << "Какой фигурой вы хотите стать?";
-								cin >> peshkaUpdate;
+								getline(cin, peshkaUpdate);
 								if (peshkaUpdate == "КОРОЛЬ")
 								{
 									cout << "Вы не можете стать Королём";
@@ -1561,7 +1858,7 @@ int main()
 						}
 					}
 					/////Ферзь
-					else if (board[8 - numStart][symStart] == "_Кч_")
+					else if (board[8 - numStart][symStart] == "_Фч_")
 					{
 						//Ход по горизонтали
 						if (numStart == numFinal && symStart != symFinal)
@@ -1735,7 +2032,72 @@ int main()
 					/////Король
 					else if (board[8 - numStart][symStart] == "_Кч_")
 					{
-						if ((numFinal - 1 == numStart || numFinal + 1 == numStart) && symFinal == symStart)
+						if (numFinal == 8 && (symFinal == 6 || symFinal == 2))
+						{
+							if (!queenStep_B)
+							{
+								cout << "Рокировка невозможна" << endl; 
+								okStep = false; 
+							}
+							for (int i = 0; i < 2; i++)
+							{
+
+								if (symFinal == 6)
+								{
+									if (!shortRokB || !stepShortRok_B)
+									{
+										cout << "Рокировка невозможна" << endl; 
+										okStep = false; 
+										break;  
+									}
+									else if (!(board[0][6 - i] == "    " || board[0][6 - i] == "****")) 
+									{
+										cout << "Рокировка невозможна" << endl; 
+										okStep = false; 
+										break;
+									}
+								}
+								else if (symFinal == 2) 
+								{
+									if (!longRokB || !stepLongRok_B)
+									{
+										cout << "Рокировка невозможна" << endl;
+										okStep = false;
+										break;
+									}
+									else if (!(board[0][2 + i] == "    " || board[0][2 + i] == "****")) 
+									{
+										cout << "Рокировка невозможна" << endl; 
+										okStep = false; 
+										break; 
+									}
+								}
+							}
+							if (!okStep) 
+							{
+								numFinal = 0; 
+								symFinal = 0; 
+								continue;
+							}
+							else if (okStep)
+							{
+								
+								if (symFinal == 6)
+								{
+									board[0][5] = "_лч_"; 
+									board[0][7] = "    ";
+								}
+								else if (symFinal == 2)
+								{
+									board[0][3] = "_лч_";
+									board[0][0] = "****";
+								}
+							}
+
+						}
+
+
+						else if ((numFinal - 1 == numStart || numFinal + 1 == numStart) && symFinal == symStart)
 						{
 							if (board[8 - numFinal][symFinal] == "_Фб_" || board[8 - numFinal][symFinal] == "_Кб_")
 							{
@@ -1780,7 +2142,7 @@ int main()
 						}
 						else
 						{
-							cout << "Неверный ход конём" << endl;
+							cout << "Неверный ход Королём" << endl;
 							numFinal = 0;
 							symFinal = 0;
 							continue;
@@ -1819,6 +2181,30 @@ int main()
 			cout << endl << endl;
 			sum++;
 
+			if (numStart == 1 && symStart == 0)
+			{
+				stepLongRok_W = false;
+			}
+			if (numStart == 1 && symStart == 7)
+			{
+				stepShortRok_W = false;
+			}
+			if (numStart == 8 && symStart == 0)
+			{
+				stepLongRok_B = false;
+			}
+			if (numStart == 8 && symStart == 7)
+			{
+				stepShortRok_B = false;
+			}
+			if (numStart == 8 && symStart == 4)
+			{
+				queenStep_B = false;
+			}
+			if (numStart == 1 && symStart == 4)
+			{
+				queenStep_W = false;
+			}
 			if (numStart == 7 && numFinal == 5 && stepBlackOrWhite == 'B')
 			{
 				controlStep = symFinal;
